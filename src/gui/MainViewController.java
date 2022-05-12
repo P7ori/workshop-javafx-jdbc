@@ -28,7 +28,7 @@ public class MainViewController
 	
 	@FXML private void menuItemDepartment_click()
 	{
-		System.out.println("menuItemDepartment_Click()");
+		loadView("/gui/DepartmentList.fxml");
 	}
 	
 	@FXML private void menuItemAbout_click()
