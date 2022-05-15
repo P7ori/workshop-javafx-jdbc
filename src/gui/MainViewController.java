@@ -1,6 +1,9 @@
 package gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 import application.Main;
 import gui.util.Alerts;
@@ -29,36 +32,20 @@ public class MainViewController
 	
 	@FXML private void menuItemDepartment_click()
 	{
-		loadView2("/gui/DepartmentList.fxml");
+		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller) -> {
+			controller.SetDepartmentService(new DepartmentService());
+			controller.updateTableView();
+		});
 	}
 	
 	@FXML private void menuItemAbout_click()
 	{
-		loadView("/gui/About.fxml");
+		loadView("/gui/About.fxml", null);
 	}
 	
 	//METHODS_______________________________________
-	private synchronized void loadView(String absoluteName)
-	{
-		try
-		{
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			VBox newVBox = loader.load();
-			Scene mainScene = Main.getMainScene();
-			
-			VBox mainVBox = (VBox)((ScrollPane)mainScene.getRoot()).getContent();
-			MenuBar menuBar = (MenuBar)mainVBox.getChildren().get(0);
-			mainVBox.getChildren().clear();
-			mainVBox.getChildren().add(menuBar);
-			mainVBox.getChildren().addAll(newVBox.getChildren());
-		}
-		catch (IOException ex)
-		{
-			Alerts.show("IOException", "Error loading view: " + ex.getMessage(), AlertType.ERROR);
-		}
-	}
 	
-	private synchronized void loadView2(String absoluteName)
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> action)
 	{
 		try
 		{
@@ -72,11 +59,10 @@ public class MainViewController
 			mainVBox.getChildren().add(menuBar);
 			mainVBox.getChildren().addAll(newVBox.getChildren());
 			
-			if(loader.getController() instanceof DepartmentListController)
+			if(action != null && (loader.getController() instanceof DepartmentListController))
 			{
-				DepartmentListController controller = loader.getController();
-				controller.SetDepartmentService(new DepartmentService());
-				controller.updateTableView();
+				T controller = loader.getController();
+				action.accept(controller);
 			}
 		}
 		catch (IOException ex)
