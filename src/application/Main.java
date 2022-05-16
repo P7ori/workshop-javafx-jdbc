@@ -16,7 +16,7 @@ public class Main extends Application
 	
 	//METHODS_________________________________
 	@Override
-	public void start(Stage stage) throws Exception 
+	public void start(Stage stage) throws Exception
 	{
 		try 
 		{

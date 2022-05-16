@@ -1,8 +1,6 @@
 package gui;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 import application.Main;
@@ -59,7 +57,7 @@ public class MainViewController
 			mainVBox.getChildren().add(menuBar);
 			mainVBox.getChildren().addAll(newVBox.getChildren());
 			
-			if(action != null && (loader.getController() instanceof DepartmentListController))
+			if(action != null)
 			{
 				T controller = loader.getController();
 				action.accept(controller);
