@@ -12,4 +12,6 @@ module workshop_javafx_jdbc
 	opens model.dao;
 	opens model.dao.impl;
 	opens db;
+	opens gui.listeners;
+	opens model.exceptions;
 }
