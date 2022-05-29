@@ -1,10 +1,12 @@
 package gui;
 
 import java.net.URL;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import db.DBException;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.event.ActionEvent;
@@ -22,6 +24,8 @@ public class DepartmentFormController implements Initializable
 	//FIELDS
 	private Department entity;
 	private DepartmentService service;
+	private List<DataChangeListener> listeners = new ArrayList<>();
+	
 	@FXML private TextField txtId;
 	@FXML private TextField txtName;
 	@FXML private Button btnSave;
@@ -39,6 +43,16 @@ public class DepartmentFormController implements Initializable
 	public void setService(DepartmentService value) {service = value;}
 	
 	//METHODS
+	public void SubscribeDataChangeListener(DataChangeListener listener)
+	{
+		listeners.add(listener);
+	}
+	
+	private void notifyListeners()
+	{
+		listeners.forEach(DataChangeListener::onDataChanged);
+	}
+	
 	public void updateFormData()
 	{
 		if(entity == null)
@@ -68,6 +82,7 @@ public class DepartmentFormController implements Initializable
 		try
 		{
 			service.saveOrUpdate(entity);
+			notifyListeners();
 		}
 		catch(DBException ex)
 		{

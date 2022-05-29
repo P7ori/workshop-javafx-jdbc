@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 import application.Main;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
@@ -27,7 +28,7 @@ import javafx.stage.Stage;
 import model.entities.Department;
 import model.services.DepartmentService;
 
-public class DepartmentListController implements Initializable
+public class DepartmentListController implements Initializable, DataChangeListener
 {
 	//FIELDS________________________________________________
 	private DepartmentService service;
@@ -49,6 +50,11 @@ public class DepartmentListController implements Initializable
 	public void SetDepartmentService (DepartmentService value) {service = value;}
 	
 	//METHODS_______________________________________________
+	@Override public void onDataChanged() 
+	{
+		updateTableView();
+	}
+	
 	private void initializeNodes()
 	{
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -103,6 +109,7 @@ public class DepartmentListController implements Initializable
 		Consumer<DepartmentFormController> action = d -> {
 			d.setEntity(obj);
 			d.setService(new DepartmentService());
+			d.SubscribeDataChangeListener(this);
 			};
 		
 		createDialogForm("/gui/DepartmentForm.fxml", Utils.currentStage(event), action);
