@@ -13,6 +13,7 @@ public class DepartmentDaoJDBC implements DepartmentDao
 {
     //FIELDS
     private final Connection connection;
+    private int affectedRows;
 
     //CONSTRUCTORS
     public DepartmentDaoJDBC(Connection connection)
@@ -64,7 +65,30 @@ public class DepartmentDaoJDBC implements DepartmentDao
 
     @Override public void update(Department d)
     {
-
+    	affectedRows = 0;
+    	PreparedStatement preparedStatement = null;
+    	try
+    	{
+    		preparedStatement = connection.prepareStatement(
+    				"UPDATE department" + 
+    		        "Name = ?" +
+    				"WHERE Id = ?;",
+    		        PreparedStatement.RETURN_GENERATED_KEYS
+    				);
+    		
+    		preparedStatement.setString(1, d.getName());
+    		preparedStatement.setInt(2, d.getId());
+    		
+    		affectedRows = preparedStatement.executeUpdate();
+    	}
+    	catch(SQLException ex)
+    	{
+    		throw new DBException("Error updating Department: " + ex.getMessage());
+    	}
+    	finally 
+    	{
+    		DB.closeStatement(preparedStatement);
+    	}
     }
 
     @Override public void deleteById(Integer id)

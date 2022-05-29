@@ -1,20 +1,27 @@
 package gui;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import db.DBException;
+import gui.util.Alerts;
+import gui.util.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Department;
+import model.services.DepartmentService;
 
 public class DepartmentFormController implements Initializable 
 {
 	//FIELDS
 	private Department entity;
+	private DepartmentService service;
 	@FXML private TextField txtId;
 	@FXML private TextField txtName;
 	@FXML private Button btnSave;
@@ -29,6 +36,7 @@ public class DepartmentFormController implements Initializable
 	
 	//PROPERTY METHODS
 	public void setEntity(Department value) {entity = value;}
+	public void setService(DepartmentService value) {service = value;}
 	
 	//METHODS
 	public void updateFormData()
@@ -40,15 +48,38 @@ public class DepartmentFormController implements Initializable
 		txtName.setText(entity.getName());
 	}
 	
+	public Department getFormData() 
+	{
+		Integer id = Utils.tryParseInt(txtId.getText());
+		String name = txtName.getText();
+		return new Department(id, name);
+	}
+	
 	//EVENTS
 	@FXML private void onBtnSaveAction(ActionEvent e)
 	{
-		System.out.println("btnSave");
+		if(entity == null)
+			throw new IllegalStateException("Department Entity was null.");
+		if(service == null)
+			throw new IllegalStateException("DepartmentService was null.");
+		
+		entity = getFormData();
+		
+		try
+		{
+			service.saveOrUpdate(entity);
+		}
+		catch(DBException ex)
+		{
+			Alerts.show(null,"Error saving or updating object" + ex.getMessage(), AlertType.ERROR);
+		}
+		
+		Utils.currentStage(e).close();
 	}
 	
 	@FXML private void onBtnCancelAction(ActionEvent e)
 	{
-		System.out.println("btnCancel");
+		Utils.currentStage(e).close();
 	}
 
 }

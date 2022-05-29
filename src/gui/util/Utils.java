@@ -11,4 +11,15 @@ public class Utils
 		return (Stage)((Node)event.getSource()).getScene().getWindow();
 	}
 
+	public static Integer tryParseInt(String value)
+	{
+		try
+		{
+			return Integer.parseInt(value);
+		}
+		catch(NumberFormatException ex)
+		{
+			return null;
+		}
+	}
 }

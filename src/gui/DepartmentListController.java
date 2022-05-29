@@ -99,13 +99,11 @@ public class DepartmentListController implements Initializable
 	@FXML private void btnNew_click(ActionEvent event)
 	{
 		Department obj = new Department();
-		obj.setId(5);
-		obj.setName("New Department");
 		
 		Consumer<DepartmentFormController> action = d -> {
 			d.setEntity(obj);
-			d.updateFormData();
-		};
+			d.setService(new DepartmentService());
+			};
 		
 		createDialogForm("/gui/DepartmentForm.fxml", Utils.currentStage(event), action);
 	}
