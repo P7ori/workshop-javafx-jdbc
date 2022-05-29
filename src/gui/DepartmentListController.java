@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import application.Main;
 import gui.util.Alerts;
@@ -67,12 +68,18 @@ public class DepartmentListController implements Initializable
 		tableViewDepartment.setItems(obsList);
 	}
 	
-	private void createDialogForm(String fullPath, Stage parentStage)
+	private <T> void createDialogForm(String fullPath, Stage parentStage, Consumer<T> action)
 	{
 		try
 		{
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(fullPath));
 			Pane pane = loader.load();
+			
+			if(action != null)
+			{
+				T controller = loader.getController();
+				action.accept(controller);
+			}
 			
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Enter Department data");
@@ -91,6 +98,15 @@ public class DepartmentListController implements Initializable
 	//EVENTS________________________________________________
 	@FXML private void btnNew_click(ActionEvent event)
 	{
-		createDialogForm("/gui/DepartmentForm.fxml", Utils.currentStage(event));
+		Department obj = new Department();
+		obj.setId(5);
+		obj.setName("New Department");
+		
+		Consumer<DepartmentFormController> action = d -> {
+			d.setEntity(obj);
+			d.updateFormData();
+		};
+		
+		createDialogForm("/gui/DepartmentForm.fxml", Utils.currentStage(event), action);
 	}
 }
